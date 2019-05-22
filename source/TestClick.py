@@ -22,7 +22,7 @@ cam = cv2.VideoCapture(int(camera))
 print("[0] re-tune matrix \n[1] reload old matrix")
 
 val = input()
-if(val == 1):
+if(int(val) == 0):
 	cv2.namedWindow('image')
 	cv2.setMouseCallback('image',readmouse)
 	while(counter < 4):
@@ -32,23 +32,23 @@ if(val == 1):
 		if k == ord('b'):
 			break
 	print(pts_src);
-	x1 = pts_src[1][0] 
-	x2 = pts_src[2][0] 
-	y1 = 0#pts_src[0][1] 
-	y2 = pts_src[2][1]
-	pts_dst = np.array([[x1, y1],[x1, y2],[x2, y2],[x2,y1]])
+	#x1 = pts_src[1][0]
+	#x2 = pts_src[2][0]
+	#y1 = 0#pts_src[0][1]
+	#y2 = pts_src[2][1]
+	#pts_dst = np.array([[x1, y1],[x1, y2],[x2, y2],[x2,y1]])
+	pts_dst = np.array([[0, 0],[0, 200],[200, 200],[200,0]])
 	cv2.destroyAllWindows()
 	h, status = cv2.findHomography(pts_src, pts_dst)
 	pickle.dump( h, open( "homographyMatrix.p", "wb" ))
 
 
 h = pickle.load( open( "homographyMatrix.p", "rb" ))
-h[0][2] = 0
-h[1][2] = 0
+#h[1][2] = 0
 print(h)
 while True:
 	ret_val, image = cam.read()
-	img = cv2.warpPerspective(image, h, (2*image.shape[1],image.shape[0]))
+	img = cv2.warpPerspective(image, h, (image.shape[1],image.shape[0]))
 	cv2.imshow('my webcam', img)
 	if cv2.waitKey(1) == 27: 
 		break  # esc to quit
