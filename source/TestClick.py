@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import pickle 
 
 pts_src = np.array([[174, 377],[301, 44],[545, 51],[659,379]])
 pts_dst = np.array([[174, 377],[174, 0],[659, 0],[659,379]])
@@ -29,13 +30,15 @@ while(counter < 4):
 print(pts_src);
 x1 = pts_src[1][0] 
 x2 = pts_src[2][0] 
-y1 = pts_src[0][1] 
+y1 = 0#pts_src[0][1] 
 y2 = pts_src[2][1]
 
 pts_dst = np.array([[x1, y1],[x1, y2],[x2, y2],[x2,y1]])
 
 
+
 h, status = cv2.findHomography(pts_src, pts_dst)
+pickle.dump( h, open( "homographyMatrix.p", "wb" ))
 im_out = cv2.warpPerspective(image, h, (image.shape[1],image.shape[0]))
 cv2.imshow("image1",im_out)
 cv2.waitKey(0)
