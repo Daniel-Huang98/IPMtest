@@ -7,6 +7,11 @@ pts_dst = np.array([[174, 377],[174, 0],[659, 0],[659,379]])
 
 counter = 0
 
+
+
+def nothing(x):
+    pass
+
 def readmouse(event,x,y,flags,param):
 	global counter
 	if event == cv2.EVENT_LBUTTONDBLCLK:
@@ -16,6 +21,17 @@ def readmouse(event,x,y,flags,param):
 		pts_src[counter][0] = x;
 		pts_src[counter][1] = y;
 		counter+=1
+
+
+cv2.namedWindow('image')
+sliderMax = 800
+
+cv2.createTrackbar('X','image',int(sliderMax/2),sliderMax,nothing)
+cv2.createTrackbar('Y','image',int(sliderMax/2),sliderMax,nothing)
+cv2.createTrackbar('Theta','image',90,180,nothing)
+
+
+
 
 camera = input("input camera: ")
 cam = cv2.VideoCapture(int(camera))
@@ -32,25 +48,41 @@ if(int(val) == 0):
 		if k == ord('b'):
 			break
 	print(pts_src);
-	#x1 = pts_src[1][0]
-	#x2 = pts_src[2][0]
-	#y1 = 0#pts_src[0][1]
-	#y2 = pts_src[2][1]
-	#pts_dst = np.array([[x1, y1],[x1, y2],[x2, y2],[x2,y1]])
+	
 	pts_dst = np.array([[690, 620],[690, 720],[790, 720],[790,620]])
-	cv2.destroyAllWindows()
+	#cv2.destroyAllWindows()
 	h, status = cv2.findHomography(pts_src, pts_dst)
 	pickle.dump( h, open( "homographyMatrix.p", "wb" ))
 print(image.shape[0],image.shape[1])
 
 h = pickle.load( open( "homographyMatrix.p", "rb" ))
 
+rows =  image.shape[0]
+cols = image.shape[1]
+
+X = 0
+Y = 0
+Theta = 0
+
+
 print(h)
 while True:
 	ret_val, image = cam.read()
 	img = cv2.warpPerspective(image, h, (4*image.shape[1],4*image.shape[0]))
-	cv2.imshow('my webcam', img)
+
+
+	X = cv2.getTrackbarPos('X','image')
+	Y = cv2.getTrackbarPos('Y','image')
+	Theta = cv2.getTrackbarPos('Theta','image')
+
+	M = np.float32([[1,0,X-int(sliderMax/2)],[0,1,Y-int(sliderMax/2)]])
+	image = cv2.warpAffine(img,M,(cols,rows))
+	M = cv2.getRotationMatrix2D((cols/2,rows/2),Theta-90,1)
+	image = cv2.warpAffine(image,M,(cols,rows))
+	#image = cv2.resize(image,(4*image.shape[1],4*image.shape[0]))
+	cv2.imshow('image', image)
 	if cv2.waitKey(1) == 27: 
 		break  # esc to quit
+pickle.dump( [X,Y,Theta], open("Translation.p", "wb" ))
 print(image.shape[0],image.shape[1])
 cv2.destroyAllWindows()
