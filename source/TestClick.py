@@ -30,6 +30,12 @@ cv2.createTrackbar('X','image',int(sliderMax/2),sliderMax,nothing)
 cv2.createTrackbar('Y','image',int(sliderMax/2),sliderMax,nothing)
 cv2.createTrackbar('Theta','image',90,180,nothing)
 
+cv2.createTrackbar('XBegin','image',100,500,nothing)
+cv2.createTrackbar('XEnd','image',400,500,nothing)
+cv2.createTrackbar('YBegin','image',100,500,nothing)
+cv2.createTrackbar('YEnd','image',400,500,nothing)
+
+
 
 
 
@@ -65,12 +71,15 @@ X = 0
 Y = 0
 Theta = 0
 
+XCrop = 50
+YCrop = 50
+XMiddle = 0
+YMiddle = 0
 
 print(h)
 while True:
 	ret_val, image = cam.read()
 	img = cv2.warpPerspective(image, h, (4*image.shape[1],4*image.shape[0]))
-
 
 	X = cv2.getTrackbarPos('X','image')
 	Y = cv2.getTrackbarPos('Y','image')
@@ -82,9 +91,24 @@ while True:
 	image = cv2.warpAffine(image,M,(cols,rows))
 	#image = cv2.resize(image,(4*image.shape[1],4*image.shape[0]))
 	cv2.line(image,(int(image.shape[1]/2),0),(int(image.shape[1]/2),image.shape[0]),(0,0,0),5)
+	#crop shit here
+	xB = cv2.getTrackbarPos('XBegin','image')
+	yB = cv2.getTrackbarPos('YBegin','image')
+	xE = cv2.getTrackbarPos('XEnd','image')
+	yE = cv2.getTrackbarPos('YEnd','image')
+	cv2.line(image,(xB,0),(xB,image.shape[0]),(255,0,0),5)
+	cv2.line(image,(xE,0),(xE,image.shape[0]),(0,0,255),5)
+	cv2.line(image,(0,yB),(image.shape[1],yB),(255,0,0),5)
+	cv2.line(image,(0,yE),(image.shape[1],yE),(0,0,255),5)
+	#crop shit here
 	cv2.imshow('image', image)
 	if cv2.waitKey(1) == 27: 
 		break  # esc to quit
+
 pickle.dump( [X,Y,Theta], open("Translation.p", "wb" ))
+pickle.dump( [xB,xE,yB,yE], open("Crop.p", "wb" ))
 print(image.shape[0],image.shape[1])
+
+
+
 cv2.destroyAllWindows()
