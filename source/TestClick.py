@@ -43,6 +43,7 @@ if(int(val) == 0):
 	cv2.setMouseCallback('image',readmouse)
 	while(counter < 4):
 		ret_val, image = cam.read()
+		cv2.line(image,(int(image.shape[1]/2),0),(int(image.shape[1]/2),image.shape[0]),(0,0,0),5)
 		cv2.imshow("image",image)
 		k = cv2.waitKey(1) & 0xFF
 		if k == ord('b'):
@@ -80,6 +81,7 @@ while True:
 	M = cv2.getRotationMatrix2D((cols/2,rows/2),Theta-90,1)
 	image = cv2.warpAffine(image,M,(cols,rows))
 	#image = cv2.resize(image,(4*image.shape[1],4*image.shape[0]))
+	cv2.line(image,(int(image.shape[1]/2),0),(int(image.shape[1]/2),image.shape[0]),(0,0,0),5)
 	cv2.imshow('image', image)
 	if cv2.waitKey(1) == 27: 
 		break  # esc to quit
