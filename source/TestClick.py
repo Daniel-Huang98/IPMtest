@@ -24,7 +24,7 @@ def readmouse(event,x,y,flags,param):
 
 
 cv2.namedWindow('image')
-sliderMax = 800
+sliderMax = 1000
 
 cv2.createTrackbar('X','image',int(sliderMax/2),sliderMax,nothing)
 cv2.createTrackbar('Y','image',int(sliderMax/2),sliderMax,nothing)
@@ -53,10 +53,10 @@ if(int(val) == 0):
 	#cv2.destroyAllWindows()
 	h, status = cv2.findHomography(pts_src, pts_dst)
 	pickle.dump( h, open( "homographyMatrix.p", "wb" ))
-print(image.shape[0],image.shape[1])
+	print(image.shape[0],image.shape[1])
 
 h = pickle.load( open( "homographyMatrix.p", "rb" ))
-
+ret_val, image = cam.read()
 rows =  image.shape[0]
 cols = image.shape[1]
 
