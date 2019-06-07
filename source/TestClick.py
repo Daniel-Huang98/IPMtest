@@ -30,8 +30,8 @@ cv2.createTrackbar('X','image',int(sliderMax/2),sliderMax,nothing)
 cv2.createTrackbar('Y','image',int(sliderMax/2),sliderMax,nothing)
 cv2.createTrackbar('Theta','image',90,180,nothing)
 
-cv2.createTrackbar('XBegin','image',100,500,nothing)
-cv2.createTrackbar('XEnd','image',400,500,nothing)
+cv2.createTrackbar('Xwidth','image',100,500,nothing)
+#cv2.createTrackbar('XEnd','image',400,500,nothing)
 cv2.createTrackbar('YBegin','image',100,500,nothing)
 cv2.createTrackbar('YEnd','image',400,500,nothing)
 
@@ -92,9 +92,9 @@ while True:
 	#image = cv2.resize(image,(4*image.shape[1],4*image.shape[0]))
 	cv2.line(image,(int(image.shape[1]/2),0),(int(image.shape[1]/2),image.shape[0]),(0,0,0),5)
 	#crop shit here
-	xB = cv2.getTrackbarPos('XBegin','image')
+	xB = int(image.shape[1]/2)-cv2.getTrackbarPos('Xwidth','image')
 	yB = cv2.getTrackbarPos('YBegin','image')
-	xE = cv2.getTrackbarPos('XEnd','image')
+	xE = int(image.shape[1]/2)+cv2.getTrackbarPos('Xwidth','image')
 	yE = cv2.getTrackbarPos('YEnd','image')
 	cv2.line(image,(xB,0),(xB,image.shape[0]),(255,0,0),5)
 	cv2.line(image,(xE,0),(xE,image.shape[0]),(0,0,255),5)
