@@ -85,16 +85,17 @@ print(h)
 while True:
 	ret_val, image = cam.read()
 	image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
-	img = cv2.warpPerspective(image, h, (4*image.shape[1],4*image.shape[0]))
-
+	image = cv2.warpPerspective(image, h, (4*image.shape[1],4*image.shape[0]))
+	#print(image.shape[0],image.shape[1])
 	X = cv2.getTrackbarPos('X','image')
 	Y = cv2.getTrackbarPos('Y','image')
 	Theta = cv2.getTrackbarPos('Theta','image')
-
+	
 	M = np.float32([[1,0,X-int(sliderMax/2)],[0,1,Y-int(sliderMax/2)]])
-	image = cv2.warpAffine(img,M,(cols,rows))
+	image = cv2.warpAffine(image,M,(cols,rows))
 	M = cv2.getRotationMatrix2D((cols/2,rows/2),Theta-90,1)
 	image = cv2.warpAffine(image,M,(cols,rows))
+	#print(image.shape[0],image.shape[1])
 	#image = cv2.resize(image,(4*image.shape[1],4*image.shape[0]))
 	cv2.line(image,(int(image.shape[1]/2),0),(int(image.shape[1]/2),image.shape[0]),(0,0,0),5)
 	#crop shit here
@@ -106,11 +107,28 @@ while True:
 	cv2.line(image,(xE,0),(xE,image.shape[0]),(0,0,255),5)
 	cv2.line(image,(0,yB),(image.shape[1],yB),(255,0,0),5)
 	cv2.line(image,(0,yE),(image.shape[1],yE),(0,0,255),5)
+
 	#crop shit here
 	cv2.imshow('image', image)
 	if cv2.waitKey(1) == 27: 
 		break  # esc to quit
 
+while True:
+	ret_val, image = cam.read()
+	image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+	image = cv2.warpPerspective(image, h, (4*image.shape[1],4*image.shape[0]))
+	M = np.float32([[1,0,X-int(sliderMax/2)],[0,1,Y-int(sliderMax/2)]])
+	image = cv2.warpAffine(image,M,(cols,rows))
+	M = cv2.getRotationMatrix2D((cols/2,rows/2),Theta-90,1)
+	image = cv2.warpAffine(image,M,(cols,rows))
+	print(image.shape[0],image.shape[1])
+	image = image[yB:yE, xB:xE]
+	cv2.imshow('image', image)
+	if cv2.waitKey(1) == 27: 
+		break  # esc to quit
+
+
+print(xB, xE, yB, yE)
 pickle.dump( [X,Y,Theta], open("Translation.p", "wb" ))
 pickle.dump( [xB,xE,yB,yE], open("Crop.p", "wb" ))
 print(image.shape[0],image.shape[1])
