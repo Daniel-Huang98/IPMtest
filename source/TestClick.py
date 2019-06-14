@@ -7,6 +7,10 @@ pts_dst = np.array([[174, 377],[174, 0],[659, 0],[659,379]])
 
 counter = 0
 
+width = 320
+height = 240
+dim = (width, height)
+
 
 
 def nothing(x):
@@ -49,6 +53,7 @@ if(int(val) == 0):
 	cv2.setMouseCallback('image',readmouse)
 	while(counter < 4):
 		ret_val, image = cam.read()
+		image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 		cv2.line(image,(int(image.shape[1]/2),0),(int(image.shape[1]/2),image.shape[0]),(0,0,0),5)
 		cv2.imshow("image",image)
 		k = cv2.waitKey(1) & 0xFF
@@ -79,6 +84,7 @@ YMiddle = 0
 print(h)
 while True:
 	ret_val, image = cam.read()
+	image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 	img = cv2.warpPerspective(image, h, (4*image.shape[1],4*image.shape[0]))
 
 	X = cv2.getTrackbarPos('X','image')
