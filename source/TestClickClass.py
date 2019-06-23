@@ -40,7 +40,7 @@ class IPM(Camera):
     def TrainAll(self):
         self.TrainHomography()
         self.TrainTransform()
-        self.TrainCrop()
+        self.TrainDualCrop()
 
     def setDimensions(self):
         width = 320
@@ -69,11 +69,10 @@ class IPM(Camera):
             self.X = cv2.getTrackbarPos('X',self.windowName)
             self.Y = cv2.getTrackbarPos('Y',self.windowName)
             self.Theta = cv2.getTrackbarPos('Theta',self.windowName)
-            #tranform the shit here
             image = self.TransformEverything(image)
             cv2.imshow(self.windowName, image)
             if cv2.waitKey(1) == 27: 
-                break  # esc to quit
+                break  
         pickle.dump([self.X,self.Y,self.Theta], open("Translation.p", "wb" ))
             
 	
@@ -82,17 +81,40 @@ class IPM(Camera):
         while True:
             ret_val, image = self.cam.read()
             image = self.TransformEverything(image)
-            xB = int(image.shape[1]/2)-cv2.getTrackbarPos('Xwidth',self.windowName)
-            yB = cv2.getTrackbarPos('YBegin',self.windowName)
-            xE = int(image.shape[1]/2)+cv2.getTrackbarPos('Xwidth',self.windowName)
-            yE = cv2.getTrackbarPos('YEnd',self.windowName)
-            cv2.line(image,(xB,0),(xB,image.shape[0]),(255,0,0),5)
-            cv2.line(image,(xE,0),(xE,image.shape[0]),(0,0,255),5)
-            cv2.line(image,(0,yB),(image.shape[1],yB),(255,0,0),5)
-            cv2.line(image,(0,yE),(image.shape[1],yE),(0,0,255),5)
+            self.xB = int(image.shape[1]/2)-cv2.getTrackbarPos('Xwidth',self.windowName)
+            self.yB = cv2.getTrackbarPos('YBegin',self.windowName)
+            self.xE = int(image.shape[1]/2)+cv2.getTrackbarPos('Xwidth',self.windowName)
+            self.yE = cv2.getTrackbarPos('YEnd',self.windowName)
+            cv2.line(image,(self.xB,0),(self.xB,image.shape[0]),(255,0,0),5)
+            cv2.line(image,(self.xE,0),(self.xE,image.shape[0]),(0,0,255),5)
+            cv2.line(image,(0,self.yB),(image.shape[1],self.yB),(255,0,0),5)
+            cv2.line(image,(0,self.yE),(image.shape[1],self.yE),(0,0,255),5)
             cv2.imshow(self.windowName, image)
             if cv2.waitKey(1) == 27: 
                 break  # esc to quit
+        pickle.dump( [self.xB,self.xE,self.yB,self.yE], open("Crop.p", "wb" ))
+
+    def TrainDualCrop(self):
+        self.TrainCrop()
+        self.yE = self.yB
+        while True:
+            ret_val, image = self.cam.read()
+            image = self.TransformEverything(image)
+            self.xB = int(image.shape[1]/2)-cv2.getTrackbarPos('Xwidth',self.windowName)
+            self.yB = cv2.getTrackbarPos('YBegin',self.windowName)
+            self.xE = int(image.shape[1]/2)+cv2.getTrackbarPos('Xwidth',self.windowName)
+            #self.yE = cv2.getTrackbarPos('YEnd',self.windowName)
+            cv2.line(image,(self.xB,0),(self.xB,image.shape[0]),(255,0,0),5)
+            cv2.line(image,(self.xE,0),(self.xE,image.shape[0]),(0,0,255),5)
+            cv2.line(image,(0,self.yB),(image.shape[1],self.yB),(255,0,0),5)
+            cv2.line(image,(0,self.yE),(image.shape[1],self.yE),(0,0,255),5)
+            cv2.imshow(self.windowName, image)
+            if cv2.waitKey(1) == 27: 
+                break  # esc to quit
+        pickle.dump( [self.xB,self.xE,self.yB,self.yE], open("CropSecond.p", "wb" ))
+
+
+        
 
     def TransformEverything(self,image):
         image = cv2.resize(image, self.dim, interpolation = cv2.INTER_AREA)
