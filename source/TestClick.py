@@ -59,7 +59,7 @@ if(int(val) == 0):
 		k = cv2.waitKey(1) & 0xFF
 		if k == ord('b'):
 			break
-	print(pts_src);
+	print(pts_src)
 	
 	pts_dst = np.array([[690, 620],[690, 720],[790, 720],[790,620]])
 	#cv2.destroyAllWindows()
