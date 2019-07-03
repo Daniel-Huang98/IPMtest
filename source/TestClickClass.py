@@ -43,8 +43,8 @@ class IPM(Camera):
         self.TrainDualCrop()
 
     def setDimensions(self):
-        width = 320
-        height = 240
+        width = 480
+        height = 360
         self.dim = (width, height)
     
     def TrainHomography(self):
